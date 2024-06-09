@@ -46,9 +46,12 @@ export class AuthService {
       );
     }
 
-    const authenticatedUser = await this.generateToken(rest);
-
-    return authenticatedUser;
+    try {
+      const authenticatedUser = await this.generateToken(rest);
+      return authenticatedUser;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async signUp({
