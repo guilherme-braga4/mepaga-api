@@ -18,9 +18,13 @@ export class SignUpDto {
 }
 
 export class AuthenticatedUser {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export class User {
   id?: number;
   name: string;
   email: string;
-  accessToken: string;
-  refreshToken: string;
 }

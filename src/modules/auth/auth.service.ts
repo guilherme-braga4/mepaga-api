@@ -12,6 +12,7 @@ import {
   SignUpDto,
   AuthenticatedUser,
   UserDto,
+  User,
 } from './dtos/auth.dto';
 import { jwtConstants } from './constants/secret';
 import * as bcrypt from 'bcrypt';
@@ -73,21 +74,28 @@ export class AuthService {
     };
   }
 
-  async generateToken(
-    payload: Partial<AuthenticatedUser>,
-  ): Promise<Partial<AuthenticatedUser>> {
+  async generateToken(payload: Partial<User>): Promise<Partial<object>> {
     const accessToken = await this.jwtService.signAsync(payload);
 
     const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: '2h',
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
       secret: jwtConstants.secret_refresh,
     });
 
+    const accessTokenExpiresAt =
+      Math.floor(Date.now() / 1000) + process.env.ACCESS_TOKEN_EXPIRES_IN;
+
+    const refreshTokenExpiresAt =
+      Math.floor(Date.now() / 1000) + process.env.REFRESH_TOKEN_EXPIRES_IN;
+
     return {
-      id: payload.id,
-      email: payload.email,
+      user: { id: payload.id, name: payload.name, email: payload.email },
       accessToken: accessToken,
+      accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+      accessTokenExpiresAt: accessTokenExpiresAt,
       refreshToken: refreshToken,
+      refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+      refreshTokenExpiresAt: refreshTokenExpiresAt,
     };
   }
 
