@@ -21,6 +21,7 @@ export class AuthController {
     return this.authService.signUp(signUpDto);
   }
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
   refreshAuth(@Body() token: any) {
